@@ -20,7 +20,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 500px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 500px;  background-color:black; background-size: cover; background-position: center top;">
     <span class="mask bg-gradient-default opacity-5"></span>
       <div class="container-fluid">
         <div class="header-body">
@@ -164,14 +164,20 @@
                       <h5 class="card-title text-uppercase text-muted mb-0">Payments</h5>
                       <?php
                           //code for summing up number of payments done by clients
-                          $result ="SELECT SUM(p_amt) FROM crms_car_payments ";
+                          // $result ="SELECT SUM(p_amt) FROM crms_car_payments ";
+                          // $stmt = $mysqli->prepare($result);
+                          // $stmt->execute();
+                          // $stmt->bind_result($clients_payments);
+                          // $stmt->fetch();
+                          // $stmt->close();
+                          $result ="SELECT SUM(revenue) FROM crms_bookings ";
                           $stmt = $mysqli->prepare($result);
                           $stmt->execute();
                           $stmt->bind_result($clients_payments);
                           $stmt->fetch();
                           $stmt->close();
                       ?>
-                      <span class="h2 font-weight-bold mb-0">Ksh <?php  echo $clients_payments;?> </span>
+                      <span class="h2 font-weight-bold mb-0">$<?php  echo $clients_payments;?> </span>
                     </div>
                     <div class="col-auto">
                       <div class="icon icon-shape bg-success text-white rounded-circle shadow">
@@ -255,53 +261,152 @@
         </div>
       </div>
     </div>
-    <div class="container-fluid mt--7">
-    <!--Pie chart to show number of car categories-->
-      <div class="row">
-        <div class="col-xl-6">
-        <!--Pie chart to show number of cars rented  per category-->
-          <div class="card shadow">
-            <div class="card-header bg-transparent">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h6 class="text-uppercase text-muted ls-1 mb-1">Car Categories</h6>
-                  <h2 class="mb-0">Percentage  Number Of Cars Per Car Category</h2>
-                </div>
-              </div>
+    <div class="card col-md-12">
+                <h2 class="card-header">Car Records</h2>
+                <div class="card-body">
+                    <div class="table-responsive">
+                    <!-- Projects table -->
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">RegNo.</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Availability</th>
+                                <th scope="col">Action<th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            //get details of all cars
+                                    $ret="SELECT * FROM crms_cars  ORDER BY RAND() "; 
+                                    $stmt= $mysqli->prepare($ret) ;
+                                    $stmt->execute() ;//ok
+                                    $res=$stmt->get_result();
+                                    $cnt=1;
+                                    while($row=$res->fetch_object())
+                                    {
+                            ?>
+                                <tr>
+                                <th scope="row">
+                                    <?php echo $cnt;?>
+                                </th>
+                                <td>
+                                    <?php echo $row->car_name;?>
+                                </td>
+                                <td>
+                                    <?php echo $row->car_regno;?>
+                                </td>
+                                
+                                <td>
+                                    <?php echo $row->car_type;?>
+                                </td>
+                                
+                                <td>
+                                    <?php 
+                                        if($row->car_status == 'Available')
+                                        {
+                                            echo '<span class="badge badge-success">Available</span>';
+                                        }
+                                        else
+                                        {
+                                            echo '<span class="badge badge-danger">Hired</span>';
+                                        }
+                                    ?>
+                                </td>
+                                <td>
+                                        <a href  ="admin_view_car.php?car_id=<?php echo $row->car_id;?>&car_regno=<?php echo $row->car_regno;?>" class="badge badge-success">
+                                            <i class="fa fa-eye"></i> <i class="fa fa-car"></i>
+                                                View
+                                        </a>
+                                              
+                                </td>
+                                </tr>
+                            <?php $cnt = 1+$cnt; }?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>    
             </div>
-            <div class="card-body">
-              <!-- Chart -->
-              <div class="chart">
-              <div id="chartContainer" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+            <div class="card col-md-12">
+                <h2 class="card-header">Booking Records</h2>
+                <div class="card-body">
+                    <div class="table-responsive">
+                    <!-- Projects table -->
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Car Name</th>
+                                <th scope="col">RegNo.</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Client Name</th>
+                                <th scope="col">Date Hired</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            //get details of all cars
+                                    $ret="SELECT * FROM crms_bookings  ORDER BY RAND() "; 
+                                    $stmt= $mysqli->prepare($ret) ;
+                                    $stmt->execute() ;//ok
+                                    $res=$stmt->get_result();
+                                    $cnt=1;
+                                    while($row=$res->fetch_object())
+                                    {
+                                        //Trim Timestamp To DD-MM-YYYY
+                                        $mysqlDateTime = $row->b_date;
+                            ?>
+                                <tr>
+                                <th scope="row">
+                                    <?php echo $cnt;?>
+                                </th>
+                                <td>
+                                    <?php echo $row->car_name;?>
+                                </td>
+                                <td>
+                                    <?php echo $row->car_regno;?>
+                                </td>
+                                
+                                <td>
+                                    <?php echo $row->car_type;?>
+                                </td>
 
-        <div class="col-xl-6">
-        <!--Pie chart to show number of cars rented  per category-->
-          <div class="card shadow">
-            <div class="card-header bg-transparent">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h6 class="text-uppercase text-muted ls-1 mb-1">Car Renting Trend</h6>
-                  <h2 class="mb-0"> Percentage Total Hires Per Car Category</h2>
-                </div>
-              </div>
-            </div>
-            <div class="card-body">
-              <!-- Chart -->
-              <div class="chart">
-              <div id="chartContainer1" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                                <td>
+                                    <?php echo $row->c_name;?>
+                                </td>
 
+                                <td>
+                                    <?php echo date("d-m-Y", strtotime($mysqlDateTime));?>
+                                </td>
+                                
+                                <td>
+                                    <?php 
+                                    //If Approved show in Green If Pending Red
+                                        if($row->b_status == 'Approved')
+                                        {
+                                            echo '<span class="badge badge-success">Approved</span>';
+                                        }
+                                        else
+                                        {
+                                            echo '<span class="badge badge-danger">Pending</span>';
+                                        }
+                                    ?>
+                                </td>
+                                
+                                </tr>
+                            <?php $cnt = 1+$cnt; }?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>    
+            </div>
       
 
       <!-- Footer -->
-      <?php include("inc/footer.php");?>      
+         
     </div>
   </div>
   <!--   Core   -->

@@ -15,6 +15,8 @@
             $car_type = $_POST['car_type'];
             $car_price = $_POST['car_price'];
             $car_features = $_POST['car_features'];
+            $oil_exchange = $_POST['oil_exchange'];
+            $purchase_day = $_POST['purchase_day'];
 
             //save car images
             $exterior_img  = $_FILES["exterior_img"]["name"];
@@ -30,9 +32,9 @@
             move_uploaded_file($_FILES["rear_img"]["tmp_name"],"../Uploads/Cars/".$_FILES["rear_img"]["name"]);
             
             //sql to insert captured values
-            $query="INSERT INTO crms_cars (car_cat_id, car_regno, car_name, car_price, car_type, car_features, exterior_img, rear_img, interior_img, front_img) VALUES (?,?,?,?,?,?,?,?,?,?)";
+            $query="INSERT INTO crms_cars (car_cat_id, car_regno, car_name, car_price, car_type, car_features, exterior_img, rear_img, interior_img, front_img, oil_exchange, purchase_day) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
             $stmt = $mysqli->prepare($query);
-            $rc=$stmt->bind_param('ssssssssss', $car_cat_id, $car_regno, $car_name, $car_price, $car_type, $car_features, $exterior_img, $rear_img, $interior_img, $front_img);
+            $rc=$stmt->bind_param('ssssssssssss', $car_cat_id, $car_regno, $car_name, $car_price, $car_type, $car_features, $exterior_img, $rear_img, $interior_img, $front_img, $oil_exchange, $purchase_day);
             $stmt->execute();
 
             if($stmt)
@@ -63,7 +65,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px;  background-color:black; background-size: cover; background-position: center top;">
         <span class="mask bg-gradient-default opacity-5"></span>
     </div>
 
@@ -87,7 +89,7 @@
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="exampleInputEmail1">Car Hiring Price Per Day (Ksh)</label>
+                                <label for="exampleInputEmail1">Car Hiring Price</label>
                                 <input type="text" required name="car_price" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                             </div>
                             
@@ -135,8 +137,17 @@
                                 <label for="exampleInputEmail1">Car Front Picture </label>
                                 <input type="file" required name="front_img" class="form-control btn btn-outline-success" id="exampleInputEmail1" aria-describedby="emailHelp">
                             </div>
+                            <div class="form-group col-md-3">
+                                <label for="exampleInputEmail1">Day of Oil Exchange </label>
+                                <input type="date" required name="oil_exchange" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="exampleInputEmail1">Day of Purchase </label>
+                                <input type="date" required name="purchase_day" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                            </div>
                         </div>
                         <hr>
+                        
                         <div class="row">
                             <div class="form-group col-md-12">
                                 <label for="exampleInputEmail1">Car Distinct Features</label>
@@ -152,7 +163,7 @@
             </div>
         </div>
       <!-- Footer -->
-        <?php include("inc/footer.php");?>      
+           
     </div>
   </div>
  

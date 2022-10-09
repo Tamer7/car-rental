@@ -16,19 +16,39 @@
             $c_dob = $_POST['c_dob'];
             $c_adr = $_POST['c_adr'];
             $c_email = $_POST['c_email'];
-            $c_pwd = sha1(md5($_POST['c_pwd']));//enc this shit 
+            $c_pwd = sha1(md5($_POST['c_pwd']));
+            $client_note = $_POST['client_note'];//enc this shit 
             //$c_bio = $_POST['c_bio'];
+
+
+            
 
             $c_dpic=$_FILES["c_dpic"]["name"];
 		        move_uploaded_file($_FILES["c_dpic"]["tmp_name"],"../Uploads/Users/".$_FILES["c_dpic"]["name"]);//move uploaded image
             
             //$h_front_dpic=$_FILES["h_front_dpic"]["name"];
             //move_uploaded_file($_FILES["h_front_dpic"]["tmp_name"],"dist/img/houses/".$_FILES["h_front_dpic"]["name"]);
-            
             //sql to insert captured values
-            $query="INSERT INTO crms_clients (c_number, c_name, c_natidno, c_phone, c_dob, c_adr, c_email, c_pwd, c_dpic) VALUES (?,?,?,?,?,?,?,?,?)";
+
+
+            // validate if a user with this email already exsists.
+            $query1 = "SELECT * FROM crms_clients";
+            $stmt= $mysqli->prepare($query1) ;
+            $stmt->execute() ;//ok
+            $res=$stmt->get_result();
+            $cnt=1;
+            while($row=$res->fetch_object())
+            {
+
+                if($row->c_email == $c_email){
+                    $err = "Email Already In Use";
+                }
+            }
+
+
+            $query="INSERT INTO crms_clients (c_number, c_name, c_natidno, c_phone, c_dob, c_adr, c_email, c_pwd, client_note) VALUES (?,?,?,?,?,?,?,?,?)";
             $stmt = $mysqli->prepare($query);
-            $rc=$stmt->bind_param('sssssssss', $c_number, $c_name, $c_natidno, $c_phone, $c_dob, $c_adr, $c_email, $c_pwd, $c_dpic);
+            $rc=$stmt->bind_param('sssssssss', $c_number, $c_name, $c_natidno, $c_phone, $c_dob, $c_adr, $c_email, $c_pwd, $client_note);
             $stmt->execute();
 
             if($stmt)
@@ -59,7 +79,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px;  background-color:black; background-size: cover; background-position: center top;">
         <span class="mask bg-gradient-default opacity-5"></span>
     </div>
 
@@ -106,11 +126,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="exampleInputEmail1">DOB</label>
-                                <input type="text" required name="c_dob" placeholder="DD - MM - YYYY"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="exampleInputEmail1">Passport</label>
-                                <input type="file"  required name="c_dpic" class="form-control btn btn-outline-success" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                <input type="date" required name="c_dob" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                             </div>
                         </div> 
 
@@ -125,6 +141,16 @@
                             </div>
                         </div>  
 
+
+                        
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1">Client Notes</label>
+                                <textarea type="text" required name="client_note"  class="form-control" id="client_note" aria-describedby="emailHelp"></textarea>
+                            </div>
+                            
+                        </div> 
+
                         
                         <button type="submit" name="reg_user" class="btn btn-primary">Add Client</button>
                     </form>
@@ -133,11 +159,15 @@
             </div>
         </div>
       <!-- Footer -->
-        <?php include("inc/footer.php");?>      
+           
     </div>
   </div>
  
+  <script src="//cdn.ckeditor.com/4.13.1/full/ckeditor.js"></script>
   <script src="assets/js/canvasjs.min.js"></script>
+  <script type="text/javascript">
+    CKEDITOR.replace('client_note')
+  </script>
   <script src="assets/js/plugins/jquery/dist/jquery.min.js"></script>
   <script src="assets/js/plugins/jquery/dist/jquery.min.js"></script>
   <script src="assets/js/plugins/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

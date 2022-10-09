@@ -41,7 +41,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px;  background-color:black; background-size: cover; background-position: center top;">
         <span class="mask bg-gradient-default opacity-5"></span>
     </div>
 
@@ -61,6 +61,7 @@
                                 <th scope="col">National ID No.</th>
                                 <th scope="col">Phone No.</th>
                                 <th scope="col">Residency</th>
+                                <th scope="col">Notes</th>
                                 <th scope="col">Action<th>
                             </tr>
                             </thead>
@@ -93,6 +94,10 @@
                                 <td>
                                     <?php echo $row->c_adr;?>
                                 </td>
+
+                                <td>
+                                    <?php echo $row->client_note;?>
+                                </td>
                                 <td>
                                         <a href  ="admin_view_client.php?c_id=<?php echo $row->c_id;?>&c_nnumber=<?php echo $row->c_number;?>" class="badge badge-success">
                                             <i class="fa fa-eye"></i> <i class="fa fa-user"></i>
@@ -116,7 +121,7 @@
             </div>
         </div>
       <!-- Footer -->
-        <?php include("inc/footer.php");?>      
+           
     </div>
   </div>
  

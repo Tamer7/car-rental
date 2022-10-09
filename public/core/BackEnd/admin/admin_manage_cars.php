@@ -41,7 +41,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px;  background-color:black; background-size: cover; background-position: center top;">
         <span class="mask bg-gradient-default opacity-5"></span>
     </div>
 
@@ -61,19 +61,26 @@
                                 <th scope="col">RegNo.</th>
                                 <th scope="col">Category</th>
                                 <th scope="col">Availability</th>
+                                <th scope="col">Car Date of Purchase</th>
+                                <th scope="col">Car Date of Oil Change</th> 
+                                <th scope="col">End Date<th>
                                 <th scope="col">Action<th>
+
                             </tr>
                             </thead>
                             <tbody>
                             <?php
                             //get details of all cars
-                                    $ret="SELECT * FROM crms_cars  ORDER BY RAND() "; 
+                                    $ret="SELECT * FROM crms_cars  ORDER BY car_name ASC"; 
                                     $stmt= $mysqli->prepare($ret) ;
                                     $stmt->execute() ;//ok
                                     $res=$stmt->get_result();
                                     $cnt=1;
                                     while($row=$res->fetch_object())
                                     {
+
+                                        $start_day = $row->start_day;
+                                        $end_day = $row->end_day;
                             ?>
                                 <tr>
                                 <th scope="row">
@@ -98,7 +105,25 @@
                                         }
                                         else
                                         {
-                                            echo '<span class="badge badge-danger">Hired</span>';
+                                            echo '<span class="badge badge-danger">Hired Until </span>';
+                                        }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php echo $row->purchase_day;?>
+                                </td>
+                                <td>
+                                <?php echo $row->oil_exchange;?>
+                                </td>
+                                <td>
+                                    <?php 
+                                        if($row->car_status == 'Available')
+                                        {
+                                            echo '<span class="badge badge-success">No dates</span>';
+                                        }
+                                        else
+                                        {
+                                            echo '<span class="badge badge-danger"> '; echo $end_day; echo '</span>';
                                         }
                                     ?>
                                 </td>
@@ -125,7 +150,7 @@
             </div>
         </div>
       <!-- Footer -->
-        <?php include("inc/footer.php");?>      
+           
     </div>
   </div>
  

@@ -44,13 +44,13 @@
 
             </div>
         </div>
-        <div class="footer-bottom row align-items-center text-center text-lg-left no-gutters">
+        <!-- <div class="footer-bottom row align-items-center text-center text-lg-left no-gutters">
             <p class="footer-text m-0 col-lg-8 col-md-12">
                 Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://martdev.info/" target="_blank">MartDevelopers</a>
             <div class="col-lg-4 col-md-12 text-center text-lg-right footer-social">
                 <a href="https://github.com/MartMbithi/LMS"><i class="ti-github"></i></a>
                
             </div>
-        </div>
+        </div> -->
     </div>
 </footer>

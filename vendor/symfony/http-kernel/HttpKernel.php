@@ -33,6 +33,18 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+// Help opcache.preload discover always-needed symbols
+class_exists(LegacyEventDispatcherProxy::class);
+class_exists(ControllerArgumentsEvent::class);
+class_exists(ControllerEvent::class);
+class_exists(ExceptionEvent::class);
+class_exists(FinishRequestEvent::class);
+class_exists(RequestEvent::class);
+class_exists(ResponseEvent::class);
+class_exists(TerminateEvent::class);
+class_exists(ViewEvent::class);
+class_exists(KernelEvents::class);
+
 /**
  * HttpKernel notifies events to convert a Request object to a Response one.
  *
@@ -49,7 +61,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     {
         $this->dispatcher = LegacyEventDispatcherProxy::decorate($dispatcher);
         $this->resolver = $resolver;
-        $this->requestStack = $requestStack ?: new RequestStack();
+        $this->requestStack = $requestStack ?? new RequestStack();
         $this->argumentResolver = $argumentResolver;
 
         if (null === $this->argumentResolver) {
@@ -64,6 +76,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     {
         $request->headers->set('X-Php-Ob-Level', (string) ob_get_level());
 
+        $this->requestStack->push($request);
         try {
             return $this->handleRaw($request, $type);
         } catch (\Exception $e) {
@@ -77,6 +90,8 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
             }
 
             return $this->handleThrowable($e, $request, $type);
+        } finally {
+            $this->requestStack->pop();
         }
     }
 
@@ -115,8 +130,6 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
      */
     private function handleRaw(Request $request, int $type = self::MASTER_REQUEST): Response
     {
-        $this->requestStack->push($request);
-
         // request
         $event = new RequestEvent($this, $request, $type);
         $this->dispatcher->dispatch($event, KernelEvents::REQUEST);
@@ -193,7 +206,6 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     private function finishRequest(Request $request, int $type)
     {
         $this->dispatcher->dispatch(new FinishRequestEvent($this, $request, $type), KernelEvents::FINISH_REQUEST);
-        $this->requestStack->pop();
     }
 
     /**

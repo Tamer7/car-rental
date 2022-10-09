@@ -20,28 +20,79 @@
             $c_natidno =$_POST['c_natidno'];
             $p_method = $_POST['p_method'];
             $p_code = $_POST['p_code'];
-            $p_amt = $_POST['p_amt'];
+            // $p_amt = $_POST['p_amt'];
             $p_ref_number = $_POST['p_ref_number'];
 
             //Also Update Booking Table and show that this bookings has been paid
 
-            $b_payment = $_POST['b_payment'];
+
+            
             $b_id = $_GET['b_id'];
+            $ret="SELECT  * FROM  crms_bookings  WHERE b_id=?";
+            $stmt= $mysqli->prepare($ret) ;
+            $stmt->bind_param('i',$b_id);
+            $stmt->execute() ;//ok
+            $res=$stmt->get_result();
+            //$cnt=1;
+            while($row=$res->fetch_object()){
+
+                $_POST['revenue'] = $row->revenue;
+                $_POST['amount_due_pay'] = $row->amount_due_pay ;
+            }
+
+
+            if (!empty($p_ref_number)) {
+                echo 'h';
+                $total_due = $_POST['amount_due_pay'] - (int) $p_ref_number;
+                $p_amt = $total_due;
+            }
+
+            else{
+                $p_amt = $_POST['amount_due_pay'];
+            }
+
+            if($p_amt == 0){
+                $b_payment = $_POST['b_payment'];
+            }
+
+            else{
+                $b_payment = "Half";
+            }
+
+
+
+            // var_dump($_POST['revenue']);
+            // var_dump($p_ref_number);exit;
+
+
+
+            
+            $b_id = $_GET['b_id'];
+
+            // var_dump($a_id, $car_cat_id, $car_id, $car_name, $car_type, $car_regno, $b_duration, $c_name, $c_natidno, $p_method, $p_code, $p_amt, $p_ref_number);exit;
             
             //sql to insert captured values
             $query1="INSERT INTO crms_car_payments (a_id, car_cat_id, car_id, car_name, car_type, car_regno, b_duration, c_name, c_natidno, p_method, p_code, p_amt, p_ref_number) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
             $query2="UPDATE crms_bookings SET b_payment = ? WHERE b_id =?";
+            $query3="UPDATE crms_bookings SET amount_due_pay = ? WHERE b_id =?";
 
             $stmt1 = $mysqli->prepare($query1);
             $stmt2 = $mysqli->prepare($query2);
+            $stmt3 = $mysqli->prepare($query3);
+
 
             $rc=$stmt1->bind_param('sssssssssssss',$a_id, $car_cat_id, $car_id, $car_name, $car_type, $car_regno, $b_duration, $c_name, $c_natidno, $p_method, $p_code, $p_amt, $p_ref_number);
             $rc=$stmt2->bind_param('si',$b_payment, $b_id);
+            $rc=$stmt3->bind_param('si',$p_amt, $b_id);
 
             $stmt1->execute();
             $stmt2->execute();
+            $stmt3->execute();
 
-            if($stmt1 && $stmt2)
+            
+            // var_dump($a_id, $car_cat_id, $car_id, $car_name, $car_type, $car_regno, $b_duration, $c_name, $c_natidno, $p_method, $p_code, $p_amt, $p_ref_number);exit;
+
+            if($stmt1 && $stmt2 && $stmt3)
             {
                       $success = "Payment Submitted";
                       
@@ -69,7 +120,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px;  background-color:black; background-size: cover; background-position: center top;">
         <span class="mask bg-gradient-default opacity-5"></span>
     </div>
 
@@ -141,32 +192,25 @@
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="exampleInputEmail1">Price Per Day</label>
-                                <input type="text" readonly value="<?php echo $row->car_price;?>" required  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                <label for="exampleInputEmail1">Total Amount</label>
+                                <input type="text" readonly value="<?php echo $row->revenue?>" required  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="exampleInputEmail1">Price for <?php echo $row->b_duration;?> Days</label>
-                                <?php
-                                    $total_price = ($row->b_duration) * ($row->car_price);
-                                ?>
-                                <input type="text" readonly value="<?php echo $total_price;?>" required name="p_amt" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                <label for="exampleInputEmail1">Amount Due</label>
+                                <input type="text" readonly value="<?php echo $row->amount_due_pay?>" required name="p_amt" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                             </div>
                             
                             <div class="form-group col-md-6">
                                 <label for="exampleInputEmail1">Payment Method</label>
                                 <select class="form-control" name="p_method">
-
-                                    <option>Mpesa</option>
-                                    <option>Airtel Money</option>
-                                    <option>Bank Deposit</option>
-        
+                                    <option>Cash</option>
                                 </select>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="exampleInputEmail1">Payment Refrence Number</label>
-                                <small>Enter the 10 digit payment code if you used Mpesa | Airltel Money and Bank Slip number if you used bank deposit</small>
+                                <label for="exampleInputEmail1">Input Paid Amount</label>
+                                <small>Enter the amount paid by the customer</small>
                                 <input type="text"  required name="p_ref_number" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                             </div>
 
@@ -187,7 +231,7 @@
             <?php }?>
         </div>
       <!-- Footer -->
-        <?php include("inc/footer.php");?>      
+           
     </div>
   </div>
  

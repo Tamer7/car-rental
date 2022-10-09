@@ -70,7 +70,11 @@ class RequestContext implements ContextInterface
 
     public function getSession(): array
     {
-        $session = $this->request->getSession();
+        try {
+            $session = $this->request->getSession();
+        } catch (\Exception $exception) {
+            $session = [];
+        }
 
         return $session ? $this->getValidSessionData($session) : [];
     }

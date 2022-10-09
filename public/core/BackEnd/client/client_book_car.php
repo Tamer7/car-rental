@@ -15,27 +15,47 @@
             $car_name  = $_POST['car_name'];
             $car_type = $_POST['car_type'];
             $car_regno = $_GET['car_regno'];
-            $b_duration = $_POST['b_duration'];
+            $b_duration = 'null';
             $c_name = $_POST['c_name'];
             $c_natidno =$_POST['c_natidno'];
             $c_phone = $_POST['c_phone'];
             $b_number = $_POST['b_number'];
             $car_price = $_POST['car_price'];
-            //$s_pwd = sha1(md5($_POST['s_pwd']));//enc this shit 
-            //$c_bio = $_POST['c_bio'];
+            $rent_start_day = $_POST['start_day'];
+            $rent_end_day = $_POST['end_day'];
 
-            //$s_dpic=$_FILES["s_dpic"]["name"];
-		        //move_uploaded_file($_FILES["s_dpic"]["tmp_name"],"../Uploads/Users/".$_FILES["s_dpic"]["name"]);//move uploaded image
-            
-            //$h_front_dpic=$_FILES["h_front_dpic"]["name"];
-            //move_uploaded_file($_FILES["h_front_dpic"]["tmp_name"],"dist/img/houses/".$_FILES["h_front_dpic"]["name"]);
-            
-            //sql to insert captured values
-            $query="INSERT INTO crms_bookings (c_id, cc_id, car_id, car_name, car_type, car_regno, b_duration, c_name, c_natidno, c_phone, b_number, car_price) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+
+
+            $query1="SELECT * FROM crms_bookings WHERE c_id = $c_id AND car_id=$car_id AND b_car_return_status != 'Returned'";
+            $stmt1 = $mysqli->prepare($query1);
+            $stmt1->execute();
+            $res=$stmt1->fetch();
+ 
+            // var_dump($res);exit;
+
+            if($res == true){
+
+                echo "<script>
+                alert('You have already requested to hire this car once');
+                window.location.href='http://localhost/LaraCarRentalMS/public/core/BackEnd/client/client_hire_car.php';
+                </script>";
+            }
+
+            else{
+
+                
+            $query="INSERT INTO crms_bookings (c_id, cc_id, car_id, car_name, car_type, car_regno, b_duration, c_name, c_natidno, c_phone, b_number, car_price, b_start_day, b_end_day) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            $query1="INSERT INTO booking_record_backup (c_id, cc_id, car_id, car_name, car_type, car_regno, b_duration, c_name, c_natidno, c_phone, b_number, car_price, b_start_day, b_end_day) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
             $stmt = $mysqli->prepare($query);
-            $rc=$stmt->bind_param('ssssssssssss',$c_id, $cc_id, $car_id, $car_name, $car_type, $car_regno, $b_duration, $c_name, $c_natidno, $c_phone, $b_number, $car_price);
-            $stmt->execute();
+            $stmt1 = $mysqli->prepare($query1);
 
+            $rc=$stmt->bind_param('ssssssssssssss',$c_id, $cc_id, $car_id, $car_name, $car_type, $car_regno, $b_duration, $c_name, $c_natidno, $c_phone, $b_number, $car_price, $rent_start_day, $rent_end_day);
+            $rc1=$stmt1->bind_param('ssssssssssssss',$c_id, $cc_id, $car_id, $car_name, $car_type, $car_regno, $b_duration, $c_name, $c_natidno, $c_phone, $b_number, $car_price, $rent_start_day, $rent_end_day);
+
+            $stmt->execute();
+            $stmt1->execute();
+            
             if($stmt)
             {
                       $success = "Car Hiring Request Submitted";
@@ -45,6 +65,13 @@
             else {
               $err = "Please Try Again Or Try Later";
             }
+
+            }
+
+
+
+
+
 			
 			
 		}
@@ -64,7 +91,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px;  background-color:black; background-size: cover; background-position: center top;">
         <span class="mask bg-gradient-default opacity-5"></span>
     </div>
 
@@ -116,16 +143,12 @@
                        
                         <div class="row">
                             <div class="form-group col-md-4">
-                                <label for="exampleInputEmail1">Hiring  Duration (Maximum 7 Days)</label>
-                                <select class="form-control" name="b_duration">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                    <option>6</option>
-                                    <option>7</option>
-                                </select>
+                                <label for="exampleInputEmail1">Start Day</label>
+                                <input type="date" id="s_day" name="start_day" class="form-control"  min="<?php echo date("Y-m-d"); ?>">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="exampleInputEmail1">End Day</label>
+                                <input type="date" required name="end_day" class="form-control"  min="<?php echo date("Y-m-d"); ?>">
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="exampleInputEmail1">Car Price Per Day</label>
@@ -172,7 +195,7 @@
             </div>
         </div>
       <!-- Footer -->
-        <?php include("inc/footer.php");?>      
+           
     </div>
   </div>
  
@@ -192,6 +215,8 @@
         token: "ee6fab19c5a04ac1a32a645abde4613a",
         application: "argon-dashboard-free"
       });
+
+      document.getElementById('s_day').valueAsDate = new Date();
   </script>
 </body>
 

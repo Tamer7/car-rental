@@ -162,7 +162,7 @@
                                                 <?php echo $row->car_regno;?>
                                             </td>
                                             <td>
-                                              Ksh <?php echo $row->car_price;?>
+                                               <?php echo $row->car_price;?>
                                             </td>
                                             <td>
                                             

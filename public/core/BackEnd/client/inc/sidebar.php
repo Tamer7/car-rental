@@ -112,11 +112,11 @@
             </a>
           </li>
 
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link " href="client_manage_payments.php">
               <i class="fas fa-money-check-alt text-blue"></i> Payments
             </a>
-          </li>
+          </li> -->
 
           <li class="nav-item">
             <a class="nav-link " href="client_manage_returns.php">

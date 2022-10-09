@@ -64,7 +64,7 @@
     </nav>
   
     <!-- Header -->
-    <div class="header  py-7 py-lg-8 " style="min-height: 400px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  py-7 py-lg-8 " style="min-height: 400px;  background-color:black; background-size: cover; background-position: center top;">
       <span class="mask bg-gradient-default opacity-5"></span>
       <div class="container">
         <div class="header-body text-center mb-7">

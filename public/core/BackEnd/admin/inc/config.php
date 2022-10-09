@@ -2,6 +2,6 @@
 $dbuser="root";
 $dbpass="";
 $host="localhost";
-$db="martdevelopers_CRMS";
+$db="car_rental";
 $mysqli=new mysqli($host,$dbuser, $dbpass, $db);
 ?>

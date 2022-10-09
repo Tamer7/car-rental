@@ -41,7 +41,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px;  background-color:black; background-size: cover; background-position: center top;">
         <span class="mask bg-gradient-default opacity-5"></span>
     </div>
 
@@ -62,6 +62,9 @@
                                 <th scope="col">Category</th>
                                 <th scope="col">Client Name</th>
                                 <th scope="col">Date Hired</th>
+                                <th scope="col">Start Date</th>
+                                <th scope="col">End Date</th>
+                                <th scope="col">Due</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Action<th>
                             </tr>
@@ -100,6 +103,29 @@
 
                                 <td>
                                     <?php echo date("d-m-Y", strtotime($mysqlDateTime));?>
+                                </td>
+
+                                <td>
+                                    <?php echo $row->b_start_day?>
+                                </td>
+
+                                <td>
+                                    <?php echo $row->b_end_day?>
+                                </td>
+
+                                <td>
+                                    <?php 
+                                    $date_now = date("Y-m-d");
+                                    
+                                    if( $date_now > $row->b_end_day){
+                                        echo 'Due';
+                                    }
+
+                                    else{
+                                        echo 'Not Due';
+                                    }
+
+                                    ?>
                                 </td>
                                 
                                 <td>
@@ -154,7 +180,7 @@
             </div>
         </div>
       <!-- Footer -->
-        <?php include("inc/footer.php");?>      
+           
     </div>
   </div>
  

@@ -23,7 +23,7 @@
    <?php include("inc/nav.php");?>
     <!-- End Navbar -->
     <!-- Header -->
-    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px; background-image: url(../../img/header-bg.jpg); background-size: cover; background-position: center top;">
+    <div class="header  pb-8 pt-5 pt-md-8" style="min-height: 300px;  background-color:black; background-size: cover; background-position: center top;">
         <span class="mask bg-gradient-default opacity-5"></span>
     </div>
 
@@ -90,7 +90,8 @@
                                         }
                                         else
                                         {
-                                            echo '<span class="badge badge-danger">Pending</span>';
+                                            $perc = ($row->amount_due_pay / $row->revenue) * 100;
+                                            echo '<span class="badge badge-danger">';  echo $perc . '% Paid'; '</span>';
                                         }
                                     ?>
                                 </td>
@@ -133,7 +134,7 @@
             </div>
         </div>
       <!-- Footer -->
-        <?php include("inc/footer.php");?>      
+           
     </div>
   </div>
  
